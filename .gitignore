@@ -1,0 +1,5 @@
+*.sw[opn]
+password
+*.pyc
+__pycache__
+CBIRdataset/images/
