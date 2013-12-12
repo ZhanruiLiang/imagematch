@@ -1,0 +1,24 @@
+{% load staticfiles %}
+{# Usage example: {% static "/my_app/myexample.jpg" %}#}
+<!DOCTYPE>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title> The Image Matching Project</title>
+        <!-- <link rel="stylesheet" href="" /> -->
+        <link rel="stylesheet" href="{% static "css/search.css" %}" />
+        <script type="text/javascript"></script>
+    </head>
+    <body>
+        <div id="content">
+            <form id="upload_form" action="/main/search/" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form }}
+                <div id="status">Choose file to upload </div>
+                <button id="upload-button" type="submit">Upload and Search</button>
+            </form>
+            {% block result %}
+            {% endblock %}
+        </div>
+    </body>
+</html>

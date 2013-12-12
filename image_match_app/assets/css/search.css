@@ -1,0 +1,20 @@
+form#upload_form {
+    border: 1px solid #000;
+    padding: 6px;
+}
+
+#status {
+    font-size: 90%;
+    padding: 3px;
+}
+
+#results {
+    border: 1px solid #000;
+    padding: 6px;
+}
+
+div.result, div.query{
+    border: 1px solid #000;
+    padding: 6px;
+    display: inline-block;
+}

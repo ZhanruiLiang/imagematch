@@ -1,0 +1,17 @@
+{% extends "search.html" %}
+
+{% block result %}
+<div id="results">
+    <h2>Origin Image</h2>
+    <div class="query">
+        <img id="query_image" src="{{queryImage.path.url}}" alt="" />
+    </div>
+    <h2>Search Results</h2>
+    <br />
+    {% for image in results %}
+        <div class="result">
+            <img src="{{image.url}}" alt="" />
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

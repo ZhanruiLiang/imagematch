@@ -2,4 +2,6 @@
 password
 *.pyc
 __pycache__
-CBIRdataset/images/
+CBIRdataset/
+media
+imagedb

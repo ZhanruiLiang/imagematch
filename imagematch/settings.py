@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'image_match_app',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -89,3 +90,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_ROOT = relpath('media')
+MEDIA_URL = '/media/'
+
+IMAGES_DIR = relpath('imagedb/')
+QUERY_DIR = os.path.join(MEDIA_ROOT, 'images')
+
+TEMPLATE_DIRS = (
+    relpath('image_match_app/template'),
+)
+
+STATICFILES_DIRS = (
+    relpath('image_match_app/assets/'),
+)
