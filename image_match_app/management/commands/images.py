@@ -39,9 +39,9 @@ class Command(BaseCommand):
     def clear_images_db(self):
         for image in Image.objects.all():
             image.delete()
-        storePath = djsettings.IMAGES_DIR
-        for dir in os.listdir(storePath):
-            os.rmdir(os.path.join(storePath, dir))
+        # storePath = djsettings.IMAGES_DIR
+        # for dir in os.listdir(storePath):
+        #     os.rmdir(os.path.join(storePath, dir))
 
     def import_to_images_db(self, dir_path, prefix):
         if not prefix:
@@ -55,13 +55,9 @@ class Command(BaseCommand):
             ext = os.path.splitext(fname)[1]
             if ext in ('.jpg', '.png'):
                 # create new Image instance
-                path = os.path.join(storePath, '%s%s'%(count, ext))
-                image = Image(path=path)
-                # copy to storePath
-                shutil.copy(srcPath, image.path)
-                # finished importing a single image
+                dstPath = os.path.join(storePath, '%s%s'%(count, ext))
+                image = search.import_image(srcPath, dstPath)
                 self.stdout.write('add [%s] as [%s].' % (srcPath, image.path))
-                image.save()
                 count += 1
             else:
                 self.stderr.write('ignore file [%s]' % (srcPath,))
