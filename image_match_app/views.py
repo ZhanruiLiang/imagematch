@@ -10,7 +10,6 @@ import os
 import tempfile
 import functools 
 import logging
-import Image as PILImage
 
 
 import forms

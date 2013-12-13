@@ -21,6 +21,7 @@ class ImageUploadForm(forms.ModelForm):
         exclude = ('time', )
     path = forms.FileField(
             label='Upload an image',
-            help_text = 'maxsize {:.2f} MB'.format(MAX_SIZE / float(2**20)),
+            # help_text = 'maxsize {:.2f} MB'.format(MAX_SIZE / float(2**20)),
+            help_text = 'maxsize %.2f MB' % (MAX_SIZE / float(2**20), ),
             validators=[validate_size]
         )
