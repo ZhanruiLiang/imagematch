@@ -90,10 +90,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_ROOT = relpath('static')
-STATIC_URL = '/static/'
+STATIC_URL = '/dip/static/'
 
 MEDIA_ROOT = relpath('media')
-MEDIA_URL = '/media/'
+MEDIA_URL = '/dip/media/'
 
 IMAGES_DIR = relpath('imagedb/')
 QUERY_DIR = os.path.join(MEDIA_ROOT, 'images')
