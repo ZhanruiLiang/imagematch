@@ -13,9 +13,6 @@ class Image(models.Model):
             print >> sys.stderr, e
         super(Image, self).delete()
 
-    def url(self):
-        return '/image/%d' % (self.id,)
-
 class QueryImage(models.Model):
     path = models.FileField(
             upload_to='images/%d',

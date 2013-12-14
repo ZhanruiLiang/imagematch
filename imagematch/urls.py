@@ -10,8 +10,7 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'imagematch.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
-    url(r'^main/', include('image_match_app.urls')),
-    url(r'^image/(?P<id>\d+)$', image_match_app.views.ShowImage.as_view()),
+    url(r'^search/', include('image_match_app.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
     # For debug purpose only
