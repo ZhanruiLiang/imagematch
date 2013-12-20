@@ -1,19 +1,49 @@
 {% extends "search.html" %}
+{% load staticfiles %}
+
+{% block query %}
+
+<img id="query-image" src="{{queryImage.path.url}}" alt="" />
+
+{% endblock %}
 
 {% block result %}
 <div id="results">
-    <h2>Origin Image</h2>
-    <div class="query">
-        <img id="query_image" src="{{queryImage.path.url}}" alt="" />
-    </div>
-    <h2>Search Results</h2>
-    <br />
-    {% for hash, image in results %}
-        <div class="result">
-            <img src="image/{{image.id}}" alt="" />
-            <br />
-            <span> Hash Distance: {{ hash }} </span>
+    <div id="images">
+        <h2>Results</h2>
+        <!-- pagination -->
+        <div id="pagination">
+            <ul id="pagination-ul"></ul>
         </div>
-    {% endfor %}
+        <ul id="images-ul"></ul>
+    </div>
+
 </div>
+
+<script type="text/javascript">
+    searchResults = [
+    {% for hash, image in results %}
+        [{{image.id}}, {{hash}}],
+    {% endfor %}
+    ];
+</script>
+
+<!-- page switcher -->
+<div id="pre" onclick="goPrePage()">
+    <a>&lt;</a>
+</div>
+<div id="next" onclick="goNextPage()">
+    <a>&gt;</a>
+</div>
+
+<!-- top -->
+<div id="top">
+    <a href="#">
+        <span>&uarr;</span>
+    </a>
+</div>
+
+<!-- javascript -->
+<script type="text/javascript" src="{%static "scripts/image.js"%}"></script>
+
 {% endblock %}

@@ -25,7 +25,6 @@ function showImages(pageNum) {
         imgs += img;
     };
     document.getElementById('images-ul').innerHTML = imgs;
-    repositonImages();
 }
 
 function pagination() {
@@ -87,61 +86,6 @@ function imgInfoMouseOut(id) {
         imgInfo = document.getElementById(Config.ImageIdPrefix + id).parentNode.lastChild;
         imgInfo.className = 'imginfo';
     }
-}
-
-function inSameRow(img1, img2) {
-    var yUp1, yDown1, yUp2, yDown2;
-    yUp1 = img1.y; yDown1 = img1.y + img1.height;
-    yUp2 = img2.y; yDown2 = img2.y + img2.height;
-    return Math.max(yUp1, yUp2) < Math.min(yDown1, yDown2);
-}
-
-function repositonImages() {
-    var x0, x1, y0, y1; // bounding box of images
-    x0 = window.outerWidth;
-    if(typeof(x0) != 'number') {
-        x0 = y0 = 1000000;
-    }else{
-        y0 = window.outerHeight;
-    }
-    x1 = 0;
-    y1 = 0;
-    var images = document.getElementById('images-ul').children;
-    for(var i = 0; i < images.length; i++) {
-        var img = images[i].children[0];
-        x0 = Math.min(img.x, x0);
-        y0 = Math.min(img.y, y0);
-        x1 = Math.max(img.x + img.width, x1);
-        y1 = Math.max(img.y + img.height, y1);
-    }
-    var margin = 10;
-    x0 -= margin;
-    x1 += margin;
-    y0 -= margin;
-    y1 += margin;
-    // console.log(x0, x1, y0, y1)
-    var row = []
-
-    function alignRow(row) {
-        var pad = ((x1 - x0) - (row[row.length - 1].x + row[row.length - 1].width - row[0].x)) / 2;
-        for(var j = 0; j < row.length; j++) {
-            row[j].x += pad;
-        }
-        console.log(pad, row);
-    }
-
-    for(var i = 0; i < images.length; i++) {
-        var img = images[i].children[0];
-        if(i < images.length &&
-                (row.length == 0 || inSameRow(row[row.length - 1], img))) {
-            row.push(img);
-        }else{
-            // A row is collected, reposition it.
-            alignRow(row)
-            row = [img]
-        }
-    }
-    alignRow(row)
 }
 
 showImages(0);

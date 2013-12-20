@@ -4,7 +4,7 @@ from models import Image, QueryImage
 from django.conf import settings as djsettings
 import datetime
 
-def search(image, number=6):
+def search(image, number=100):
     """
     image: models.QueryImage object
     return: a list of matched results, with type models.Image .

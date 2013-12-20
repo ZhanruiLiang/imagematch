@@ -1,20 +1,202 @@
-form#upload_form {
-    border: 1px solid #000;
-    padding: 6px;
+* {
+    padding: 0px;
+    margin: 0px;
 }
-
-#status {
-    font-size: 90%;
-    padding: 3px;
+body {
+    margin: 0px auto;
+    width: 80%;
+    background: #f1f1f1;
+    font-family: Helvetica;
 }
-
-#results {
-    border: 1px solid #000;
-    padding: 6px;
+/*---Title
+--------------------------------------*/
+ #title {
+    margin: 40px 0px 0px 0px;
 }
-
-div.result, div.query{
-    border: 1px solid #000;
-    padding: 6px;
+/*---Input
+--------------------------------------*/
+ #input {
+    margin: 30px 0px 0px 10px;
+    height: 100px;
+}
+#input div {
     display: inline-block;
+    float: left;
+    margin-top: 30px;
+}
+#upload {
+    display: block;
+}
+#input span {
+    display: block;
+    font-size: 12px;
+    margin: 6px auto auto 4px;
+    color: #97C897;
+    opacity: 0.6;
+}
+#query-image {
+    display: inline-block;
+    max-height: 100%;
+}
+label[for="id_path"] {
+    font-size: 12px;
+}
+#status {
+    font-size: 10px;
+    color: #97C897;
+}
+/*---Images
+--------------------------------------*/
+ div#images {
+    display: block;
+    margin: 30px auto;
+}
+ul#images-ul {
+    list-style: none;
+    padding: 0;
+}
+#images-ul li {
+    font-size: 14px;
+    display: inline-block;
+    margin: 10px 0px;
+    padding: 10px 12px;
+    height: 200px;
+    float: left;
+    /* position: relative; */
+}
+#images-ul li img {
+    outline: none;
+    border: none;
+    display: block;
+    max-height: 100%;
+}
+#images-ul li:hover {
+    transition: 0.5s ease-out;
+    background: #97C897;
+}
+.imginfo {
+    display: none;
+}
+.imginfo-hover {
+    display: block;
+    position: relative;
+    padding: 10px 0px 10px 4%;
+    cursor: default;
+    max-width: 100%;
+    background: #000;
+    color: #fff;
+    opacity: 0.75;
+    top: -34px;
+}
+/*---Pagination
+--------------------------------------*/
+ #pagination {
+    display: block;
+    margin: 0 auto 0 18%;
+    width: 80%;
+}
+#pagination-ul {
+    list-style:none;
+    margin: 0 auto;
+}
+#pagination-ul a {
+    display: inline-block;
+    width:24px;
+    margin:2px;
+    text-align: center;
+    text-decoration:none;
+    color: #ccc;
+    cursor: pointer;
+}
+a#nextPage, a#prePage {
+    color: #97C897;
+}
+#pagination-ul a:hover {
+    background:#97C897;
+    color:#fff;
+    opacity: 0.5;
+}
+a#nextPage:hover, a#prePage:hover {
+    background: #ccc;
+}
+#pagination-ul a.selected {
+    background:#97C897;
+    color:#fff;
+}
+#pagination-ul a.selected:hover {
+    background:#97C897;
+    color:#fff;
+    opacity: 1;
+}
+/*---Page Switcher
+--------------------------------------*/
+ #pre, #next {
+    position: fixed;
+    top: 45%;
+    text-align: center;
+    height: 90px;
+    width: 90px;
+    background: #000;
+    opacity: 0.75;
+    color: #fff;
+    transition: all .3s ease-in;
+    -webkit-transition: all .3s ease-in;
+    cursor: pointer;
+}
+#pre {
+    display: none;
+    left: -70px;
+    border-radius: 0px 100% 100% 0px;
+}
+#next {
+    right: -70px;
+    border-radius: 100% 0px 0px 100%;
+}
+#pre a, #next a {
+    display: block;
+    max-width: 100%;
+    font-size: 20px;
+    color: #fff;
+    position: relative;
+    top: 39%;
+    cursor: pointer;
+}
+#pre a {
+    left: 17%;
+}
+#next a {
+    right: 17%;
+}
+#pre:hover {
+    transition: 0.2s ease-in;
+    left: -50px;
+}
+#next:hover {
+    transition: 0.2s ease-in;
+    right: -50px;
+}
+/*---Page Switcher
+--------------------------------------*/
+ #top a {
+    display: block;
+    height: 40px;
+    width: 35px;
+    position: fixed;
+    bottom: 70px;
+    right: 60px;
+    background: #97C897;
+    opacity: 0.4;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #fff;
+    transition: 0.25s ease-in;
+}
+#top a:hover {
+    opacity: 0.95;
+    transition: 0.25s ease-in;
+}
+#top a span {
+    font-size: 16px;
+    display: block;
+    margin: 12px auto auto 33%;
 }
