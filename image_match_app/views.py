@@ -60,4 +60,4 @@ class ShowImage(View):
         path = image.path
         ext = os.path.splitext(path)[1]
         type = {'.png': 'image/png', '.jpg': 'image/jpeg'}[ext]
-        return HttpResponse(open(path, 'rb').read(), mimetype=type)
+        return HttpResponse(open(path, 'rb').read(), content_type=type)

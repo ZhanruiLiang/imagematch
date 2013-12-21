@@ -5,27 +5,36 @@ import settings
 import datetime
 import sysv_ipc as ipc
 import struct
-# import threading
+import threading
 import PIL.Image
 import subprocess
 import re
 
+_cacheLock = threading.Lock()
 _imageCache = {}
 
 def get_shm(imageObj):
     """
     image: Image or QueryImage object
     """
-    if imageObj not in _imageCache:
-        image = PIL.Image.open(imageObj.path)
-        w, h = image.size
-        size = 8 + w * h * 3
-        shm = ipc.SharedMemory(None, flags=ipc.IPC_CREX, size=size)
-        shm.write(struct.pack('LL', w, h))
-        shm.write(image.tobytes(), offset=8)
-        _imageCache[imageObj] = shm
-    else:
-        shm = _imageCache[imageObj]
+    with _cacheLock:
+        if imageObj not in _imageCache:
+            image = PIL.Image.open(imageObj.path)
+            w, h = image.size
+            size = 8 + w * h * 3
+            shm = ipc.SharedMemory(None, flags=ipc.IPC_CREX, size=size)
+            if settings.SCALE_IMAGE:
+                rateW = settings.SCALE_TO_LENGTH / float(w)
+                rateH = settings.SCALE_TO_LENGTH / float(h)
+                rate = min(1, rateW, rateH)
+                w = int(w * rate)
+                h = int(h * rate)
+                image = image.resize((w, h))
+            shm.write(struct.pack('LL', w, h))
+            shm.write(image.tobytes(), offset=8)
+            _imageCache[imageObj] = shm
+        else:
+            shm = _imageCache[imageObj]
     return shm
 
 def clear_cache():
@@ -66,8 +75,21 @@ def search(targetImg, number=100):
     image: models.QueryImage object
     return: a list of matched results, with type models.Image .
     """
-    images = Image.objects.all()
-    results = [(get_likelyhood(targetImg, image), image) for image in images]
+    results = []
+    lock = threading.Semaphore(settings.WORKER_THREAD_COUNT)
+
+    def add(image):
+        with lock:
+            results.append((get_likelyhood(targetImg, image), image))
+
+    threads = []
+    for image in Image.objects.all():
+        with lock:
+            thread = threading.Thread(target=add, args=(image,))
+            thread.start()
+            threads.append(thread)
+    for thread in threads:
+        thread.join()
     results.sort(key=lambda (r, img): -r)
     results = results[:number]
     return results
