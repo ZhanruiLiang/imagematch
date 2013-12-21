@@ -15,12 +15,13 @@ function showImages(pageNum) {
     var imgs = '';
     for (var i = pageNum * Config.ImagesPerPage + 0; i < (pageNum + 1) * Config.ImagesPerPage && i < nImages; i++) {
         var path = Config.ImageURLBasePath + searchResults[i][0];
-        var hashDistance = searchResults[i][1];
+        var rate = searchResults[i][1];
         var img = '<li onmouseover="imgInfoHover(' + i 
             + ')" onmouseout="imgInfoMouseOut(' + i + ')"><img id="' + Config.ImageIdPrefix + i.toString() 
             + '" src="' + path 
+            + '" alt="' + searchResults[i][0]
             + '"></img><span class="' + (Config.AlwaysShowInfo ? "imginfo-hover" : "imginfo") 
-            + '">Hash Distance: ' + hashDistance 
+            + '">Likelyhood: ' + rate
             + '</span></li>\n';
         imgs += img;
     };

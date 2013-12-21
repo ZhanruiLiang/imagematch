@@ -4,7 +4,7 @@ import os, sys
 # Create your models here.
 class Image(models.Model):
     path = models.FilePathField(max_length=200)
-    hash = models.CharField(max_length=500)
+    # hash = models.CharField(max_length=500)
 
     def delete(self):
         try:

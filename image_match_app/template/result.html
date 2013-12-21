@@ -3,7 +3,7 @@
 
 {% block query %}
 
-<img id="query-image" src="{{queryImage.path.url}}" alt="" />
+<img id="query-image" src="{{queryImage.path.url}}" alt="{{queryImage.id}}" />
 
 {% endblock %}
 
@@ -21,11 +21,7 @@
 </div>
 
 <script type="text/javascript">
-    searchResults = [
-    {% for hash, image in results %}
-        [{{image.id}}, {{hash}}],
-    {% endfor %}
-    ];
+    searchResults = [{% for hash, image in results %}[{{image.id}},{{hash}}],{% endfor %}];
 </script>
 
 <!-- page switcher -->
