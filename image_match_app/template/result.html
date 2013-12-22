@@ -8,6 +8,20 @@
 {% endblock %}
 
 {% block result %}
+<div id="info">
+    <h2>SearchInfo</h2>
+    <table>
+        <tr>
+            <th>Elapsed Time</th>
+            <td>{{searcher.usedTime|stringformat:'.3f'}} seconds</td>
+        </tr>
+        <tr>
+            <th>Correct Rate</th>
+            <td>{{searcher.correctRate|stringformat:'.3f'}}</td>
+        </tr>
+    </table>
+</div>
+
 <div id="results">
     <div id="images">
         <h2>Results</h2>
@@ -21,7 +35,7 @@
 </div>
 
 <script type="text/javascript">
-    searchResults = [{% for hash, image in results %}[{{image.id}},{{hash}}],{% endfor %}];
+    searchResults = [{% for hash, image in searcher.results %}[{{image.id}},{{hash}}],{% endfor %}];
 </script>
 
 <!-- page switcher -->

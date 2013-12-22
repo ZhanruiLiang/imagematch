@@ -1,0 +1,42 @@
+{% load staticfiles %}
+{# Usage example: {% static "/my_app/myexample.jpg" %}#}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title> The Image Matching Project - Test Correct Rate</title>
+        <link rel="stylesheet" href="{% static "css/test.css" %}" />
+    </head>
+    <body>
+        <div id="title">
+            <h1>Test Correct Rate</h1>
+        </div>
+
+        {% block query %}
+
+        <h2>Configure Parameters</h2>
+        <form id="params" action="." method="post">
+            {% csrf_token %}
+            <ul>
+                {% for group in groups %}
+                <li>
+                    <label for="enable-group-{{group.group}}"> 
+                        <span class="group-name">Group: {{group.group}}</span>
+                        <span class="group-count">Number: {{group.count}}</span>
+                    </label>
+                    <input type="checkbox" checked="checked" name="enable-group-{{group.group}}" />
+                </li>
+                {% endfor %}
+            </ul>
+            <label for="samples-per-group">Samples per Group</label>
+            <input type="text" class="number-input" name="samples-per-group" size="8" value="2" />
+            <button id="submit" type="submit">Start Test</button>
+            <input type="hidden" name="allgroups" value="{{allgroups}}" />
+        </form>
+
+        {% endblock %}
+
+        {% block result %}
+        {% endblock %}
+    </body>
+</html>

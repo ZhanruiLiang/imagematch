@@ -77,7 +77,6 @@ public:
 double compare(const Image& img1, const Image& img2) {
     Histogram h1(img1), h2(img2);
     double rate = 0;
-    // return rate;
     for(auto & kv: h1) {
         unsigned key = kv.first;
         if(h2.find(key) == h2.end()) 

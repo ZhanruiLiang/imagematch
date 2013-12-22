@@ -8,7 +8,7 @@ MAX_SIZE = settings.MAX_SIZE_PER_UPLOAD
 
 def validate_size(self):
     if MAX_SIZE > 0 and self.size > MAX_SIZE:
-        raise ValidationError(
+        raise forms.ValidationError(
             'Size limit exceeded, max: %(max).2f MB, yours: %(yours).2f MB.',
             params={
                 'max': MAX_SIZE / float(2**20),

@@ -1,7 +1,7 @@
 var prePageNum = 0;
 
 var Config = {
-    ImagesPerPage: 10,
+    ImagesPerPage: 12,
     ImageURLBasePath: 'image/',
     ImageIdPrefix: 'result-img-',
     AlwaysShowInfo: true,

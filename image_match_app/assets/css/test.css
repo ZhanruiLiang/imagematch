@@ -1,0 +1,21 @@
+form li {
+    border: solid #888 1px;
+    padding: 5px;
+    display: inline-block;
+    margin: 2px;
+    border-radius: 3px;
+    background-color: #fff;
+}
+
+body {
+    background-color: #F2F2F2;
+    width: 80%;
+    margin: 0px auto;
+    font-family: Helvetica;
+}
+
+input.number-input {
+    text-align: right;
+}
+
+

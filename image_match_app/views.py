@@ -6,11 +6,13 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic.base import View
 from django.conf import settings as djsettings
 from django.utils.decorators import method_decorator
+from django.db.models import Count
 import os
 import tempfile
 import functools 
 import logging
-
+import threading
+import json
 
 import forms
 import search
@@ -18,12 +20,8 @@ from models import Image, QueryImage
 
 logger = logging.getLogger(__name__)
 
-def debug(*args):
-    fifo = open('/tmp/djfifo', 'a')
-    for arg in args:
-        print >> fifo, arg,
-    print >> fifo
-    fifo.close()
+def json_response(data):
+    return HttpResponse(json.dumps(data), 'json')
 
 def make_response(request, templateName, contextDict):
     return HttpResponse(get_template(templateName).render(
@@ -44,10 +42,11 @@ class SearchView(View):
         form = forms.ImageUploadForm(request.POST, request.FILES)
         if form.is_valid():
             image = form.save()
-            results = search.search(image)
+            searcher = search.Searcher(image)
+            searcher.run()
             return make_response(request, self.RESULT_TEMPLATE, {
                 'queryImage': image,
-                'results': results,
+                'searcher': searcher,
                 'form': form,
                 })
         else:
@@ -61,3 +60,55 @@ class ShowImage(View):
         ext = os.path.splitext(path)[1]
         type = {'.png': 'image/png', '.jpg': 'image/jpeg'}[ext]
         return HttpResponse(open(path, 'rb').read(), content_type=type)
+
+class TestCorrectRate(View):
+    TEST_TEMPLATE = 'test.html'
+    TEST_RESULT_TEMPLATE = 'test_result.html'
+    def get(self, request):
+        groups = list(Image.objects.values('group').annotate(count=Count('group')))
+        groups.sort(key=lambda x: x['group'])
+        return make_response(request, self.TEST_TEMPLATE, {
+            'groups': groups,
+            'allgroups': ','.join(str(x['group']) for x in groups),
+        })
+
+    @csrf_protect_method
+    def post(self, request):
+        self.parse_post(request.POST)
+        with CheckStatus.lock:
+            if CheckStatus.tester is None \
+                    or CheckStatus.tester.state == search.Tester.STATE_FINISHED:
+                tester = search.Tester(self.samplesPerGroup, self.enabledGroups)
+                CheckStatus.tester = tester
+                thread = threading.Thread(target=tester.run)
+                thread.start()
+            else:
+                tester = CheckStatus.tester
+        return make_response(request, self.TEST_RESULT_TEMPLATE, {
+                'allgroups': ','.join(str(x) for x in tester.enabledGroups),
+                'samples_per_group': tester.samplesPerGroup,
+            })
+
+    def parse_post(self, POST):
+        groups = map(int, POST['allgroups'].split(','))
+        self.enabledGroups = [g for g in groups if 'enable-group-%d'%g in POST]
+        self.samplesPerGroup = int(POST['samples-per-group'])
+
+class CheckStatus(View):
+    lock = threading.Lock()
+    tester = None
+
+    def get(self, request):
+        if self.tester is None:
+            return json_response({})
+        output = {
+            'progress': self.tester.progress,
+            'state': self.tester.state,
+        }
+        if self.tester.state is self.tester.STATE_FINISHED:
+            output.update({
+                'groupAverageRates': str(self.tester.groupAverageRates),
+                'averageRate': self.tester.averageRate,
+            })
+        return json_response(output)
+

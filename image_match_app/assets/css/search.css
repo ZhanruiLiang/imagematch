@@ -15,7 +15,7 @@ body {
 }
 /*---Input
 --------------------------------------*/
- #input {
+#input, #info {
     margin: 30px 0px 0px 10px;
     height: 100px;
 }
@@ -23,6 +23,11 @@ body {
     display: inline-block;
     float: left;
     margin-top: 30px;
+}
+
+#input {
+    display: inline-block;
+    min-height: 150px;
 }
 #upload {
     display: block;
@@ -45,8 +50,11 @@ label[for="id_path"] {
     font-size: 10px;
     color: #97C897;
 }
-/*---Images
---------------------------------------*/
+/* ---Info ---------------------------------- */
+#info {
+    float: right;
+}
+/*---Images ----------------------------------*/
  div#images {
     display: block;
     margin: 30px auto;
@@ -175,8 +183,7 @@ a#nextPage:hover, a#prePage:hover {
     transition: 0.2s ease-in;
     right: -50px;
 }
-/*---Page Switcher
---------------------------------------*/
+/*---Page Switcher--------------------------------------*/
  #top a {
     display: block;
     height: 40px;
@@ -199,4 +206,8 @@ a#nextPage:hover, a#prePage:hover {
     font-size: 16px;
     display: block;
     margin: 12px auto auto 33%;
+}
+
+h2 {
+    margin: 10px;
 }
