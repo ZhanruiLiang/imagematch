@@ -1,42 +1,50 @@
-#include "sharedmemory.hpp"
-#include "comparer.hpp"
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <unordered_map>
 #include <vector>
 
+#include "comparer.hpp"
+
 struct Color {
-    unsigned char r, g, b;
+    float l, a, b;
 };
 
 const int BITS[3] = {6, 6, 6};
+const float MINS[3] = {0, -86.185, -107.863};
+const float MAXS[3] = {100, 98.254, 94.482};
+
+
 class ConvertedColor {
 public:
+    static unsigned char convert(float v, float min, float max, int bits) {
+        return floor((v - min) / ((max - min) / (1 << bits))) + .5;
+    }
+
     ConvertedColor() {}
     ConvertedColor(const Color& p) {
-        r = p.r >> (8 - BITS[0]);
-        g = p.g >> (8 - BITS[1]);
-        b = p.b >> (8 - BITS[2]);
+        l = convert(p.l, MINS[0], MAXS[0], BITS[0]);
+        a = convert(p.l, MINS[1], MAXS[1], BITS[1]);
+        b = convert(p.l, MINS[2], MAXS[2], BITS[2]);
     }
     unsigned getKey()const {
-        unsigned key = r;
-        key = (key << BITS[0]) | g;
+        unsigned key = l;
+        key = (key << BITS[0]) | a;
         key = (key << BITS[1]) | b;
         return key;
     }
 private:
-    unsigned char r, g, b;
+    unsigned char l, a, b;
 };
 
 class Image {
 public:
-    Image(const void * shmbuf) {
-        width = ((unsigned long *)shmbuf)[0];
-        height = ((unsigned long *)shmbuf)[1];
-        Color* rawbuf = (Color *)((unsigned long *)shmbuf + 2);
-        buf.resize(width * height);
-        for(int i = 0; i < (int)buf.size(); i++) {
-            buf[i] = ConvertedColor(rawbuf[i]);
+    Image(int width, int height, const float * fbuf):
+            width(width), height(height){
+        int size = width * height;
+        buf.resize(size);
+        for(int i = 0; i < size; i++) {
+            buf[i] = ConvertedColor(Color{fbuf[i*3], fbuf[i*3+1], fbuf[i*3+2]});
         }
     }
 
@@ -49,7 +57,7 @@ public:
     }
 
 private:
-    unsigned long width, height;
+    int width, height;
     std::vector<ConvertedColor> buf;
 };
 
@@ -75,7 +83,7 @@ public:
 };
 
 
-double _compare(const Image& img1, const Image& img2) {
+double _compareImg(const Image& img1, const Image& img2) {
     Histogram h1(img1), h2(img2);
     double rate = 0;
     for(auto & kv: h1) {
@@ -87,10 +95,9 @@ double _compare(const Image& img1, const Image& img2) {
     return rate;
 }
 
-double compare(int key1, int size1, int key2, int size2){
-    IPCSharedMemory 
-        shm1(key1, size1),
-        shm2(key2, size2);
-    Image img1(shm1.getBuffer()), img2(shm2.getBuffer());
-    return _compare(img1, img2);
+double _compareBuf(int width1, int height1, float* buf1,
+        int width2, int height2, float* buf2) {
+    return 0.1;
+    // Image img1(width1, height1, buf1), img2(width2, height2, buf2);
+    // return _compareImg(img1, img2);
 }

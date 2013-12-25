@@ -1,4 +1,6 @@
 #pragma once
 #include "sharedmemory.hpp"
 
-extern "C" double compare(int key1, int size1, int key2, int size2);
+extern "C"
+double _compareBuf(int width1, int height1, float* buf1,
+        int width2, int height2, float* buf2) ;

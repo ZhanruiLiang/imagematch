@@ -8,3 +8,5 @@ WORKER_THREAD_COUNT = 4
 SCALE_IMAGE = True
 # If SCALE_IMAGE is True, images will be scaled such that max(width, height) = SCALE_TO_LENGTH
 SCALE_TO_LENGTH = 120
+
+SHM_SIZE = 100 * 1024 * 1024 # 100 M

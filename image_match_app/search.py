@@ -11,60 +11,62 @@ import time
 import random
 # import pylab
 import comparer
+import skimage
+import skimage.io
+import skimage.color
+import skimage.transform
+import numpy as np
 
-# _cacheLock = threading.Lock()
-_imageCache = {}
+class Cache(object):
+    def __init__(self):
+        self._cache = {}
 
-def get_shm(imageObj):
-    """
-    image: Image or QueryImage object
-    """
-    # with _cacheLock:
-    if imageObj not in _imageCache:
+    def get(self, imageObj):
+        try:
+            return self._cache[imageObj]
+        except KeyError:
+            return self.make_cache(imageObj)
+
+    def make_cache(self, imageObj):
         if isinstance(imageObj, QueryImage):
             path = imageObj.path.path
         else:
             path = imageObj.path
-        image = PIL.Image.open(path)
-        w, h = image.size
+        image = skimage.io.imread(path)
+        w, h = image.shape[:2]
         if settings.SCALE_IMAGE:
             rateW = settings.SCALE_TO_LENGTH / float(w)
             rateH = settings.SCALE_TO_LENGTH / float(h)
             rate = min(1, rateW, rateH)
             w = int(w * rate)
             h = int(h * rate)
-            image = image.resize((w, h))
-        size = 8 + w * h * 3
-        shm = ipc.SharedMemory(None, flags=ipc.IPC_CREX, size=size)
-        shm.write(struct.pack('LL', w, h))
-        shm.write(image.tobytes(), offset=8)
-        _imageCache[imageObj] = shm
-    else:
-        shm = _imageCache[imageObj]
-    return shm
+            image = skimage.transform.resize(image, (w, h))
+        image = skimage.color.rgb2lab(image).flatten().astype(np.float32)
 
-def clear_cache():
-    _imageCache.clear()
+        val = (w, h, image)
+        self._cache[imageObj] = val
+        return val
+
+cache = Cache()
 
 def get_likelyhood(targetImg, modelImg):
-    shm1 = get_shm(targetImg)
-    shm2 = get_shm(modelImg)
-    result = comparer.compare(shm1.key, shm1.size, shm2.key, shm2.size)
+    result = comparer.compare(*cache.get(targetImg)+cache.get(modelImg))
     return result
 
 def debug_get_likelyhood(queryId, imgId):
-    targetImg = QueryImage.objects.get(id=queryId)
-    modelImg = Image.objects.get(id=imgId)
+    raise NotImplementedError
+    # targetImg = QueryImage.objects.get(id=queryId)
+    # modelImg = Image.objects.get(id=imgId)
 
-    shm1 = get_shm(targetImg)
-    shm2 = get_shm(modelImg)
+    # shm1 = get_shm(targetImg)
+    # shm2 = get_shm(modelImg)
 
-    bin = settings.COMPARER_BIN
+    # bin = settings.COMPARER_BIN
 
-    p = subprocess.Popen(
-            ['gdb', bin, '--args', bin, str(shm1.key), str(shm1.size), str(shm2.key), str(shm2.size)],
-        )
-    p.wait()
+    # p = subprocess.Popen(
+    #         ['gdb', bin, '--args', bin, str(shm1.key), str(shm1.size), str(shm2.key), str(shm2.size)],
+    #     )
+    # p.wait()
 
 class Searcher(object):
     """

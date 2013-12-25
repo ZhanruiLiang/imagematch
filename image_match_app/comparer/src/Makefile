@@ -3,10 +3,10 @@ all: _comparer.so
 install: _comparer.so
 	cp _comparer.so comparer.py ../../
 
-comparer_wrap.cpp:
+comparer_wrap.cpp: comparer.cpp comparer.hpp sharedmemory.hpp
 	swig -c++ -python -o comparer_wrap.cpp comparer.i
 
-_comparer.so: comparer.cpp comparer_wrap.cpp
+_comparer.so: comparer_wrap.cpp
 	g++ -O2 -shared -fPIC -std=c++11 \
 		-I/usr/include/python2.7 \
 		-I/usr/include/python2.7/config \

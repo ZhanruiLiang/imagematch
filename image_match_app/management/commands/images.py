@@ -58,7 +58,7 @@ class Command(BaseCommand):
 
     def import_to_images_db(self, groundtruth, dir_path, prefix, dry=False):
         if not prefix:
-            prefix = datetime.datetime.now().strftime('%m-%d-%h-%H:%M')
+            prefix = datetime.datetime.now().strftime('%m-%d-%H:%M')
         storePath = os.path.join(djsettings.IMAGES_DIR, prefix)
         if not dry:
             if not os.path.exists(storePath):
