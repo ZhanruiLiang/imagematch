@@ -35,7 +35,7 @@
 </div>
 
 <script type="text/javascript">
-    searchResults = [{% for hash, image in searcher.results %}[{{image.id}},{{hash}}],{% endfor %}];
+    searchResults = [{% for rate, image in searcher.results %}[{{image.id}},{{rate|stringformat:'.3f'}}],{% endfor %}];
 </script>
 
 <!-- page switcher -->

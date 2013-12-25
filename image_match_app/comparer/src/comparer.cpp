@@ -1,4 +1,5 @@
 #include "sharedmemory.hpp"
+#include "comparer.hpp"
 #include <cstdio>
 #include <cstdlib>
 #include <unordered_map>
@@ -74,7 +75,7 @@ public:
 };
 
 
-double compare(const Image& img1, const Image& img2) {
+double _compare(const Image& img1, const Image& img2) {
     Histogram h1(img1), h2(img2);
     double rate = 0;
     for(auto & kv: h1) {
@@ -86,21 +87,10 @@ double compare(const Image& img1, const Image& img2) {
     return rate;
 }
 
-int main(int argc, char** argv) {
-    if(argc < 5) {
-        fprintf(stderr, "usage: comparer shmkey1 size1 shmkey2 size2\n");
-        exit(1);
-    }
-    try {
-        IPCSharedMemory 
-            shm1(atoi(argv[1]), atoi(argv[2])),
-            shm2(atoi(argv[3]), atoi(argv[4]));
-        Image img1(shm1.getBuffer()), img2(shm2.getBuffer());
-        double rate = compare(img1, img2);
-        printf("%.6lf", rate);
-        return 0;
-    }catch(std::exception & ex) {
-        fprintf(stderr, ex.what());
-        return 1;
-    }
+double compare(int key1, int size1, int key2, int size2){
+    IPCSharedMemory 
+        shm1(key1, size1),
+        shm2(key2, size2);
+    Image img1(shm1.getBuffer()), img2(shm2.getBuffer());
+    return _compare(img1, img2);
 }

@@ -9,7 +9,8 @@ import PIL.Image
 import subprocess
 import time
 import random
-import pylab
+# import pylab
+import comparer
 
 # _cacheLock = threading.Lock()
 _imageCache = {}
@@ -48,19 +49,8 @@ def clear_cache():
 def get_likelyhood(targetImg, modelImg):
     shm1 = get_shm(targetImg)
     shm2 = get_shm(modelImg)
-    p = subprocess.Popen(
-        [settings.COMPARER_BIN, 
-            str(shm1.key), str(shm1.size), str(shm2.key), str(shm2.size)], 
-        stderr=subprocess.PIPE,
-        stdout=subprocess.PIPE
-    )
-    p.wait()
-    if p.returncode != 0:
-        # error occured
-        errInfo = p.stderr.read()
-        raise Exception("Error comparing [%s] and [%s]:\n  %s" % (
-            targetImg.id, modelImg.id, errInfo))
-    return float(p.stdout.read())
+    result = comparer.compare(shm1.key, shm1.size, shm2.key, shm2.size)
+    return result
 
 def debug_get_likelyhood(queryId, imgId):
     targetImg = QueryImage.objects.get(id=queryId)
