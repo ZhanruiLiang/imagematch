@@ -62,7 +62,7 @@ def debug_get_likelyhood(queryId, imgId):
     bin = settings.COMPARER_BIN
 
     p = subprocess.Popen(
-            ['gdb', bin, '--args', bin, str(shm1.key), str(shm1.size), str(shm2.key), str(shm2.size)],
+        ['gdb', bin, '--args', bin, str(shm1.key), str(shm1.size), str(shm2.key), str(shm2.size)],
         )
     p.wait()
 
@@ -152,7 +152,7 @@ class Tester(object):
     def run(self):
         self.progress = 0.
         self.state = self.STATE_RUNNING
-        groups = {g:[] for g in self.enabledGroups}
+        groups = {g: [] for g in self.enabledGroups}
         images = Image.objects.all()
         for image in images:
             g = image.group
@@ -162,11 +162,13 @@ class Tester(object):
         correctRates = []
         nNeedToCompare = len(images) * len(groups) * self.samplesPerGroup
         nCompared = [0]
+
         def update_progress():
             # if self.state in (self.STATE_FINISHED, self.STATE_ERROR):
             #     return
             nCompared[0] += 1
             self.progress = '%d / %d' % (nCompared[0], (nNeedToCompare))
+            self.progress = float(nCompared[0]) / nNeedToCompare
 
         for g, imagesInGroup in groups.iteritems():
             samples = random.sample(imagesInGroup, 

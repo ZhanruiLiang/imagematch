@@ -20,16 +20,16 @@
             <ul>
                 {% for group in groups %}
                 <li>
+                    <input type="checkbox" checked="checked" name="enable-group-{{group.group}}" id="enable-group-{{group.group}}"/>
                     <label for="enable-group-{{group.group}}"> 
                         <span class="group-name">Group: {{group.group}}</span>
                         <span class="group-count">Number: {{group.count}}</span>
                     </label>
-                    <input type="checkbox" checked="checked" name="enable-group-{{group.group}}" />
                 </li>
                 {% endfor %}
             </ul>
-            <label for="samples-per-group">Samples per Group</label>
-            <input type="text" class="number-input" name="samples-per-group" size="8" value="2" />
+            <label for="samples-per-group" id="samples-per-group-label">Samples per Group</label>
+            <input type="text" class="number-input" name="samples-per-group" id="samples-per-group" size="8" value="2" />
             <button id="submit" type="submit">Start Test</button>
             <input type="hidden" name="allgroups" value="{{allgroups}}" />
         </form>
