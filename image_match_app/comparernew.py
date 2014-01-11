@@ -22,8 +22,9 @@ class RGBComparer:
     @classmethod
     def make_histograms(cls, data):
         data = cls.convert(data)
+        n = float(np.prod(data.shape[:2]))
         return tuple(
-            np.histogram(data[:, :, level], bins=bins, range=ranges, normed=True)[0]
+            np.histogram(data[:, :, level], bins=bins, range=ranges)[0] / n
             for (level, bins, ranges) in zip(range(3), cls.BINS, cls.RANGES)
         )
 
@@ -86,24 +87,41 @@ class HSVComparer(RGBComparer):
 
 
 class TunedHSVComparer(HSVComparer):
-    BINS = [100, 80, 80]
-    WEIGHTS = [1., 1., 1.]
+    BINS = [100, 80, 80, 100]
+    RANGES = [(0.0, 1.0), (0.0, 1.0), (0.0, 1.0)]
+    WEIGHTS = [1., 1., 1., 1.]
+
+    @classmethod
+    def make_histograms(cls, data):
+        data = cls.convert(data)
+        hists = []
+        n = float(np.prod(data.shape[:2]))
+
+        for (level, bins, ranges) in zip(range(3), cls.BINS, cls.RANGES):
+            hists.append(
+                np.histogram(data[:, :, level], bins=bins, range=ranges)[0] / n
+            )
+        hists.append(
+            np.histogram(
+                (.5 + data[:, :, 0]) % 1,
+                bins=cls.BINS[0],
+                range=cls.RANGES[0],
+            )[0] / n
+        )
+        # print(hists)
+        # assert 0
+        return tuple(hists)
 
     @classmethod
     def compare(cls, img1, img2):
         data1 = cls.get_image_data(img1)
         data2 = cls.get_image_data(img2)
-        h1 = data1[0]
-        h2 = data2[0]
-        result = cls.WEIGHTS[0] * .5 * (
-            np.sum(np.minimum(h1, h2)) 
-            + np.sum(np.minimum((.5 + h1) % 1, (.5 + h2) % 1))
-        )
-        for level in range(1, 3):
+        result = 0.
+        for level in range(4):
             result += cls.WEIGHTS[level] * np.sum(np.minimum(data1[level], data2[level]))
         return result
 
 # comparer = RGBComparer
 # comparer = LabComparer
-# comparer = HSVComparer
-comparer = TunedHSVComparer
+comparer = HSVComparer
+# comparer = TunedHSVComparer
