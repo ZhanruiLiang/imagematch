@@ -9,7 +9,7 @@ struct Color {
     unsigned char r, g, b;
 };
 
-const int BITS[3] = {6, 6, 6};
+const int BITS[3] = {6, 5, 4};
 class ConvertedColor {
 public:
     ConvertedColor() {}

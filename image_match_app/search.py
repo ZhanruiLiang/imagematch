@@ -1,75 +1,25 @@
-import os
 from models import Image, QueryImage
 from django.conf import settings as djsettings
 import settings
-import sysv_ipc as ipc
 import struct
 import threading
-import PIL.Image
 import subprocess
 import time
 import random
-# import pylab
-import comparer
+
+# import pyximport
+# pyximport.install()
+# from c_comparer import compare
+from comparernew import compare
+# import comparernew
 
 # _cacheLock = threading.Lock()
-_imageCache = {}
 
-def get_shm(imageObj):
-    """
-    image: Image or QueryImage object
-    """
-    # with _cacheLock:
-    if imageObj not in _imageCache:
-        if isinstance(imageObj, QueryImage):
-            path = imageObj.path.path
-        else:
-            path = imageObj.path
-        image = PIL.Image.open(path)
-        w, h = image.size
-        if settings.SCALE_IMAGE:
-            rateW = settings.SCALE_TO_LENGTH / float(w)
-            rateH = settings.SCALE_TO_LENGTH / float(h)
-            rate = min(1, rateW, rateH)
-            w = int(w * rate)
-            h = int(h * rate)
-            image = image.resize((w, h))
-        size = 8 + w * h * 3
-        shm = ipc.SharedMemory(None, flags=ipc.IPC_CREX, size=size)
-        shm.write(struct.pack('LL', w, h))
-        shm.write(image.tobytes(), offset=8)
-        _imageCache[imageObj] = shm
-    else:
-        shm = _imageCache[imageObj]
-    return shm
-
-def clear_cache():
-    _imageCache.clear()
-
-def get_likelyhood(targetImg, modelImg):
-    shm1 = get_shm(targetImg)
-    shm2 = get_shm(modelImg)
-    result = comparer.compare(shm1.key, shm1.size, shm2.key, shm2.size)
-    return result
-
-def debug_get_likelyhood(queryId, imgId):
-    targetImg = QueryImage.objects.get(id=queryId)
-    modelImg = Image.objects.get(id=imgId)
-
-    shm1 = get_shm(targetImg)
-    shm2 = get_shm(modelImg)
-
-    bin = settings.COMPARER_BIN
-
-    p = subprocess.Popen(
-        ['gdb', bin, '--args', bin, str(shm1.key), str(shm1.size), str(shm2.key), str(shm2.size)],
-        )
-    p.wait()
 
 class Searcher(object):
     """
     After calling search method, these attribute will be available:
-        results
+        results: [(rate, image)]
         usedTime
         correctRate
     """
@@ -87,25 +37,30 @@ class Searcher(object):
 
         def add(image):
             with lock:
-                if self._error: return
+                if self._error:
+                    return
                 try:
-                    results.append((get_likelyhood(self.targetImg, image), image))
+                    results.append((compare(self.targetImg, image), image))
                     if self.on_finished_single:
                         self.on_finished_single()
                 except:
                     self._error = True
                     raise
 
-        threads = []
-        for image in Image.objects.all():
-            with lock:
-                if self._error:
-                    break
-                thread = threading.Thread(target=add, args=(image,))
-                thread.start()
-                threads.append(thread)
-        for thread in threads:
-            thread.join()
+        if settings.WORKER_THREAD_COUNT > 1:
+            threads = []
+            for image in Image.objects.all():
+                with lock:
+                    if self._error:
+                        break
+                    thread = threading.Thread(target=add, args=(image,))
+                    thread.start()
+                    threads.append(thread)
+            for thread in threads:
+                thread.join()
+        else:
+            for image in Image.objects.all():
+                add(image)
         results.sort(key=lambda (r, img): -r)
         self.usedTime = time.time() - self.startTime
         if not self._error:
@@ -118,7 +73,7 @@ class Searcher(object):
         # Assume that the first result is identity to the query image
         assert self.results
         group = self.results[0][1].group
-        nr = 0 # The count of in group(similar) results
+        nr = 0  # The count of in group(similar) results
         ans = 0.
         for r, (_, image) in enumerate(self.results):
             if image.group == group:
@@ -199,3 +154,19 @@ class Tester(object):
                 for (g, r) in groupAverageRates.iteritems()]
         self.averageRate = total
 
+def get_all_ranking(save_to):
+    from utils import ProgressBar
+    fout = open(save_to, 'w')
+
+    images = Image.objects.all()
+    progress = ProgressBar(len(images) * len(images), 20)
+    for target in images:
+        searcher = Searcher(target)
+        searcher.run()
+        results = []
+        for _, image in searcher.results:
+            results.append((image.origin_id, len(results)))
+            progress.update()
+        results.sort()
+        print >> fout, ' '.join(str(x) for _, x in results)
+    print('Finished. Written to file "{}"'.format(save_to))

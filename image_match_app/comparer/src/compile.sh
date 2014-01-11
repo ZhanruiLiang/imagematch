@@ -5,4 +5,4 @@ g++ -O2 -shared -fPIC -std=c++11 \
     -I/usr/include/python2.7/config \
     comparer_wrap.cpp comparer.cpp
 # test
-python -c 'import comparer'
+python2 -c 'import comparer'
