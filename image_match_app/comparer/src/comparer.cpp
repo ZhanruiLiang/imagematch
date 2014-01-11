@@ -10,10 +10,7 @@ struct Color {
     float l, a, b;
 };
 
-const int BITS[3] = {6, 6, 6};
-const float MINS[3] = {0, -86.185, -107.863};
-const float MAXS[3] = {100, 98.254, 94.482};
-
+const int BITS[3] = {6, 5, 4};
 
 class ConvertedColor {
 public:

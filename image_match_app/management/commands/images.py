@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
-import os, sys, shutil
+import os, shutil
 import optparse
 import datetime
+import re
 
-import image_match_app.search as search
 from django.core.management.base import BaseCommand
-from image_match_app.models import Image, QueryImage 
+from image_match_app.models import Image
 from django.conf import settings as djsettings
 
 Option = optparse.make_option
@@ -35,7 +35,8 @@ class Command(BaseCommand):
             groundtruth = {}
             with open(groundtruthPath) as inf:
                 for line in inf:
-                    if not line: continue
+                    if not line:
+                        continue
                     group, name = line.split()
                     group = int(group)
                     groundtruth[name] = group
@@ -64,13 +65,16 @@ class Command(BaseCommand):
             if not os.path.exists(storePath):
                 os.mkdir(storePath)
         count = 0
+        idMather = re.compile(r'(\d+)')
         for fname in os.listdir(dir_path):
             srcPath = os.path.join(dir_path, fname)
-            ext = os.path.splitext(fname)[1]
+            name, ext = os.path.splitext(fname)
             if ext in ('.jpg', '.png'):
                 # create new Image instance
-                dstPath = os.path.join(storePath, '%s%s'%(count, ext))
-                image = Image(path=dstPath, group=groundtruth[fname])
+                match = idMather.search(name)
+                id = match.group(1) if match else -1
+                dstPath = os.path.join(storePath, '%s%s' % (count, ext))
+                image = Image(path=dstPath, group=groundtruth[fname], origin_id=id)
                 if not dry:
                     shutil.copy(srcPath, dstPath)
                     image.save()

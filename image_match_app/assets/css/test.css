@@ -1,21 +1,193 @@
-form li {
-    border: solid #888 1px;
-    padding: 5px;
-    display: inline-block;
-    margin: 2px;
-    border-radius: 3px;
-    background-color: #fff;
+* {
+    padding: 0px;
+    margin: 0px;
 }
-
 body {
-    background-color: #F2F2F2;
-    width: 80%;
     margin: 0px auto;
+    width: 80%;
+    background: #f1f1f1;
     font-family: Helvetica;
 }
-
-input.number-input {
-    text-align: right;
+/*---Title
+--------------------------------------*/
+ #title {
+    margin: 40px 0px;
 }
-
-
+/*---h2
+--------------------------------------*/
+ h2 {
+    padding-left: 26px;
+    border-left: 6px solid #D6D6D6;
+}
+/*---Multi-select
+--------------------------------------*/
+ ul {
+    margin: 30px;
+    list-style: none;
+}
+li {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px;
+    width: 250px;
+    color: #CECECE;
+    font-size: 16px;
+}
+input[type=checkbox]:hover, li:hover {
+    cursor: pointer;
+    color: #545454;
+}
+input[type=checkbox] {
+    visibility: hidden;
+    font-size: 20px;
+}
+input[type="checkbox"]:after {
+    color: #fff;
+    background: #E1E1E1;
+    content:"";
+    display: block;
+    position: relative;
+    top: -12px;
+    left: -18px;
+    line-height: 38px;
+    text-align: center;
+    visibility: visible;
+    width: 38px;
+    height: 38px;
+}
+input[type=checkbox]:checked:after {
+    content:"✓";
+    background: #2A817C;
+}
+input[type=checkbox]:checked + label {
+    background: #39A9A4;
+    color: #fff;
+}
+label {
+    padding: 10px 15px;
+}
+li:hover > label {
+    cursor: pointer;
+    background: #EAEAEA;
+}
+/*---Sample per Group
+--------------------------------------*/
+ #samples-per-group-label {
+    height: 15px;
+    display: inline-block;
+    font-size: 17px;
+    padding-left: 26px;
+    border-left: 6px solid #D6D6D6;
+}
+input[type="text"] {
+    display: inline-block;
+    margin-left: 20px;
+    opacity: 0.5;
+    transition: 0.3s;
+    text-align: center;
+    width: 40px;
+    height: 20px;
+    border-radius: 5px;
+}
+input[type="text"]:hover, input[type="text"]:focus {
+    opacity: 1;
+    transition: 0.3s;
+}
+button {
+    display: inline-block;
+    margin-left: 70px;
+    font-size: 14px;
+    height: 36px;
+    width: 120px;
+    background: #69c773;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: 0.4s;
+    -webkit-transition: 0.4s;
+}
+button:focus, button:hover {
+    opacity: 1;
+    transition: 0.4s;
+    -webkit-transition: 0.4s;
+}
+/*---Test Result
+--------------------------------------*/
+ #enabled-groups, #state, #averageRate {
+    margin: 14px 4px;
+    font-size: 16px;
+    padding: 5px 20px;
+    border-left: 6px solid #ccc;
+}
+.value {
+    font-family: Menlo,Monaco,'Andale Mono','lucida console','Courier New',monospace;
+    color: #00C13F;
+    margin-left: 10px;
+}
+/*---Progress pie chart
+--------------------------------------*/
+ .progress-pie-chart {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: #E5E5E5;
+    position: relative;
+}
+.progress-pie-chart.gt-50 {
+    background-color: #81CE97;
+}
+.ppc-progress {
+    content:"";
+    position: absolute;
+    border-radius: 50%;
+    left: calc(50% - 100px);
+    top: calc(50% - 100px);
+    width: 200px;
+    height: 200px;
+    clip: rect(0, 200px, 200px, 100px);
+}
+.ppc-progress .ppc-progress-fill {
+    content:"";
+    position: absolute;
+    border-radius: 50%;
+    left: calc(50% - 100px);
+    top: calc(50% - 100px);
+    width: 200px;
+    height: 200px;
+    clip: rect(0, 100px, 200px, 0);
+    background: #81CE97;
+    transform: rotate(60deg);
+}
+.gt-50 .ppc-progress {
+    clip: rect(0, 100px, 200px, 0);
+}
+.gt-50 .ppc-progress .ppc-progress-fill {
+    clip: rect(0, 200px, 200px, 100px);
+    background: #E5E5E5;
+}
+.ppc-percents {
+    content:"";
+    position: absolute;
+    border-radius: 50%;
+    left: calc(50% - 173.91304px/2);
+    top: calc(50% - 173.91304px/2);
+    width: 173.91304px;
+    height: 173.91304px;
+    background: #fff;
+    text-align: center;
+    display: table;
+}
+.ppc-percents span {
+    display: block;
+    font-size: 2.6em;
+    font-weight: bold;
+    color: #81CE97;
+}
+.pcc-percents-wrapper {
+    display: table-cell;
+    vertical-align: middle;
+}
+.progress-pie-chart {
+    margin: 50px auto 0;
+}

@@ -106,8 +106,11 @@ class CheckStatus(View):
             'state': self.tester.state,
         }
         if self.tester.state is self.tester.STATE_FINISHED:
+            groupAverageRates = []
+            for i, r in self.tester.groupAverageRates:
+                groupAverageRates.append({'group': i, 'rate': r})
             output.update({
-                'groupAverageRates': str(self.tester.groupAverageRates),
+                'groupAverageRates': groupAverageRates,
                 'averageRate': self.tester.averageRate,
             })
         return json_response(output)
