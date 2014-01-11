@@ -7,11 +7,7 @@ import subprocess
 import time
 import random
 
-# import pyximport
-# pyximport.install()
-# from c_comparer import compare
-from comparernew import compare
-# import comparernew
+from comparernew import comparer
 
 class Searcher(object):
     """
@@ -20,6 +16,8 @@ class Searcher(object):
         usedTime
         correctRate
     """
+    comparerName = comparer.__name__
+
     def __init__(self, targetImage):
         self.targetImg = targetImage
         self.startTime = time.time()
@@ -37,7 +35,7 @@ class Searcher(object):
                 if self._error:
                     return
                 try:
-                    results.append((compare(self.targetImg, image), image))
+                    results.append((comparer.compare(self.targetImg, image), image))
                     if self.on_finished_single:
                         self.on_finished_single()
                 except:

@@ -1,3 +1,11 @@
+Dependencies
+------------
+1. Python 2.7+
+2. Django 1.5
+3. Numpy
+4. Skimage
+5. PIL(Python Image Library)
+
 How to setup
 ------------
 
@@ -31,9 +39,9 @@ $ ./manage.py dbshell
 ```
 
 ### Import images to database
-For example, if you have a bunch of images in folder `~/secret/images`.
+For example, if you put CBIRdataset in the project folder, then
 ```
-$ ./manage.py images --add ~/secret/images
+./manage.py images --groundtruth CBIRdataset/groundtruth.txt --add CBIRdataset/images     
 ```
 
 ### View image database status
@@ -50,3 +58,14 @@ $ ./manage.py images --clear
 ```
 $ ./manage.py query --clear
 ```
+
+Pages
+-----
+
+Search Page: 
+
+    localhost:8000/search/
+
+Test Rate Page: 
+
+    localhost:8000/search/test/

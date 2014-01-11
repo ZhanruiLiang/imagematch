@@ -27,7 +27,7 @@ $(document).ready(function() {
         });
     }
 
-    handle = setInterval(getProgress, 1000);
+    handle = setInterval(getProgress, 100);
 
     function progressPieChart(progress) {
         var $ppc = $('.progress-pie-chart'),

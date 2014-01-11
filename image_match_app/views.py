@@ -1,22 +1,19 @@
-from django.shortcuts import render
 from django.http import HttpResponse
-from django.template import Template, Context, RequestContext
+from django.template import RequestContext
 from django.template.loader import get_template
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic.base import View
-from django.conf import settings as djsettings
+# from django.conf import settings as djsettings
 from django.utils.decorators import method_decorator
 from django.db.models import Count
 import os
-import tempfile
-import functools 
 import logging
 import threading
 import json
 
 import forms
 import search
-from models import Image, QueryImage
+from models import Image
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +45,7 @@ class SearchView(View):
                 'queryImage': image,
                 'searcher': searcher,
                 'form': form,
-                })
+            })
         else:
             # response the error form to client
             return make_response(request, self.SEARCH_TEMPLATE, {'form': form})
@@ -64,12 +61,14 @@ class ShowImage(View):
 class TestCorrectRate(View):
     TEST_TEMPLATE = 'test.html'
     TEST_RESULT_TEMPLATE = 'test_result.html'
+
     def get(self, request):
         groups = list(Image.objects.values('group').annotate(count=Count('group')))
         groups.sort(key=lambda x: x['group'])
         return make_response(request, self.TEST_TEMPLATE, {
             'groups': groups,
             'allgroups': ','.join(str(x['group']) for x in groups),
+            'comparerName': search.Searcher.comparerName,
         })
 
     @csrf_protect_method
@@ -85,13 +84,14 @@ class TestCorrectRate(View):
             else:
                 tester = CheckStatus.tester
         return make_response(request, self.TEST_RESULT_TEMPLATE, {
-                'allgroups': ','.join(str(x) for x in tester.enabledGroups),
-                'samples_per_group': tester.samplesPerGroup,
-            })
+            'allgroups': ','.join(str(x) for x in tester.enabledGroups),
+            'samples_per_group': tester.samplesPerGroup,
+            'comparerName': search.Searcher.comparerName,
+        })
 
     def parse_post(self, POST):
         groups = map(int, POST['allgroups'].split(','))
-        self.enabledGroups = [g for g in groups if 'enable-group-%d'%g in POST]
+        self.enabledGroups = [g for g in groups if 'enable-group-%d' % g in POST]
         self.samplesPerGroup = int(POST['samples-per-group'])
 
 class CheckStatus(View):
@@ -114,4 +114,3 @@ class CheckStatus(View):
                 'averageRate': self.tester.averageRate,
             })
         return json_response(output)
-
