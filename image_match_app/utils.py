@@ -10,5 +10,5 @@ class ProgressBar:
         self.cnt += 1
         if self.cnt == self.total or self.cnt % self.printFreq == 0:
             bar = '{:60s} '.format('|' * (60 * self.cnt // self.total))
-            print('\rprogress: [{}] {}/{} ({:.2f})%'.format(
-                bar, self.cnt, self.total, 100 * self.cnt / self.total), end='')
+            print('\rprogress: [{}] {}/{} ({:.2%})'.format(
+                bar, self.cnt, self.total, self.cnt / self.total), end='')
